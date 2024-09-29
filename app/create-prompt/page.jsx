@@ -11,7 +11,7 @@ const CreatePrompt = () => {
   const [submitting, setSubmitting] = useState(false);
   const [post, setPost] = useState({
     prompt: "",
-    tag: "m",
+    tag: "",
   });
 
   const createPrompt = async (e) => {
