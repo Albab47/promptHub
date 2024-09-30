@@ -33,6 +33,7 @@ const Feed = () => {
     fetchPosts();
   }, []);
 
+  // Filter posts based on search
   const filterPrompts = (searchText) => {
     const regex = new RegExp(searchText, "i");
     return posts.filter(
@@ -43,6 +44,7 @@ const Feed = () => {
     );
   };
 
+  // To handle search
   const handleSearchChange = (e) => {
     setSearchText(e.target.value);
     clearTimeout(searchTimeout);
@@ -54,6 +56,13 @@ const Feed = () => {
       }, 500)
     );
   };
+
+  // To handle tag click
+  const handleTagClick = (tagName) => {
+    setSearchText(tagName);
+    const filteredPosts = filterPrompts(tagName);
+    setSearchedResults(filteredPosts);
+  }
 
   return (
     <section className="feed">
@@ -69,9 +78,9 @@ const Feed = () => {
       </form>
 
       {searchText ? (
-        <PromptCardList data={searchedResults} handleTagClick={() => {}} />
+        <PromptCardList data={searchedResults} handleTagClick={handleTagClick} />
       ) : (
-        <PromptCardList data={posts} handleTagClick={() => {}} />
+        <PromptCardList data={posts} handleTagClick={handleTagClick} />
       )}
     </section>
   );
