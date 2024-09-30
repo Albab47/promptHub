@@ -1,23 +1,23 @@
 "use client";
 import Profile from "@components/Profile";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const MyProfile = () => {
-  const { data: session } = useSession();
-  const [posts, setPosts] = useState([]);
+const UserProfile = ({params}) => {
+  const [userPosts, setUserPosts] = useState([]);
   const router = useRouter();
+  const searchParams = useSearchParams()
+  const userName = searchParams.get("name")
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch(`/api/users/${session?.user.id}/posts`);
+    const fetchUserPosts = async () => {
+      const response = await fetch(`/api/users/${params?.id}/posts`);
       const data = await response.json();
-      setPosts(data);
+      setUserPosts(data);
     };
 
-    if (session?.user.id) fetchPosts();
-  }, [session?.user.id]);
+    if (params?.id) fetchUserPosts();
+  }, [params?.id]);
 
   const handleEdit = (post) => {
     router.push(`/update-prompt?id=${post._id}`);
@@ -33,23 +33,25 @@ const MyProfile = () => {
           method: "DELETE",
         });
 
-        const filteredPosts = posts.filter((p) => p._id !== post._id);
-        setPosts(filteredPosts)
+        const filteredPosts = userPosts.filter((p) => p._id !== post._id);
+        setUserPosts(filteredPosts);
       } catch (error) {
         console.log(error);
       }
     }
   };
 
+  console.log(userPosts);
+
   return (
     <Profile
-      name="My"
-      desc="Welcome to your personalized profile page"
-      data={posts}
+      name={userName}
+      desc={`Welcome to ${userName} profile page`}
+      data={userPosts}
       handleEdit={handleEdit}
       handleDelete={handleDelete}
     />
   );
 };
 
-export default MyProfile;
+export default UserProfile;
